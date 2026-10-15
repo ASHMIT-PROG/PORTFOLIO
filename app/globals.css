@@ -55,6 +55,7 @@
 @layer base {
   * { border-color: var(--border); }
   html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+  .blueprint-section[id] { scroll-margin-top: 2rem; }
   body { margin: 0; background: var(--background); color: var(--foreground); }
   button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   button, [role="button"] { cursor: pointer; }

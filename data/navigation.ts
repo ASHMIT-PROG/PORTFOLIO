@@ -3,9 +3,9 @@ import { site } from "@/data/site";
 export type NavigationItem = { label: string; href: string; external?: boolean };
 
 export const navigation: NavigationItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Projects", href: "/projects" },
-  { label: "Experience", href: "/experience" },
+  { label: "Home", href: "/#main-content" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Experience", href: "/#experience-preview" },
 ];
 
 export const moreNavigation: NavigationItem[] = [
