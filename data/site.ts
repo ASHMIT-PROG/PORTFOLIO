@@ -1,0 +1,42 @@
+export const site = {
+  name: "Ashmit Sharma", wordmark: "Ashmit", initials: "AS",
+  role: "Backend & AI/ML Engineer", email: "ashmitsha09@gmail.com",
+  githubUsername: "ASHMIT-PROG", githubUrl: "https://github.com/ASHMIT-PROG",
+  location: "Chennai", education: "3rd-year B.Tech CSE at SRM IST",
+  description: "Ashmit Sharma — Computer Science undergraduate building intelligent systems, machine learning projects, and reliable APIs.",
+  resumeUrl: "/resume.pdf",
+  avatar: { src: "/avatar.webp", alt: "Ashmit Sharma" },
+  banner: { src: "/banner.webp", alt: "Ashmit Sharma’s portfolio banner" },
+  sections: { about: "About", contact: "Contact", projects: "Projects", tech: "Tech Stack", activity: "GitHub Activity", experience: "Experience", highlights: "Highlights", cta: "Scrolled Too Far" },
+  about: {
+    paragraphs: [
+      [{ text: "I’m a " }, { text: "Computer Science undergraduate", emphasis: true }, { text: " passionate about building intelligent systems and developing a strong foundation in " }, { text: "Artificial Intelligence", emphasis: true }, { text: "." }],
+      [{ text: "I’ve gained hands-on experience in " }, { text: "machine learning and deep learning", emphasis: true }, { text: " through internships and by building projects." }],
+    ],
+    focusLabel: "Currently, I’m focused on:",
+    focus: ["Building end-to-end Machine Learning and Deep Learning projects", "Exploring Generative AI, RAG systems, AI Agents, and more", "Strengthening DSA and problem-solving skills", "Learning how to design reliable AI systems"],
+  },
+  projects: {
+    title: "Projects", description: "A collection of things I’m building and exploring.", viewAll: "View all",
+    all: "All", filters: "Filter projects by technology", empty: "No projects match this filter.",
+    comingSoon: "Project coming soon", hint: "Add it in /data/projects.ts", slotLabel: "ROOM FOR WHAT’S NEXT",
+    repository: "Source code", website: "Visit project", demo: "Watch demo", preview: "Project preview",
+    statuses: { live: "Live", "in-progress": "In progress", "open-source": "Open source", research: "Research" },
+  },
+  tech: { hint: "( hover to play )", filters: "Filter technologies", instructions: "Hover, focus, or tap a technology to animate it." },
+  activity: { unavailable: "Activity is unavailable right now.", link: "View on GitHub", label: "GitHub contributions over the past year", unavailableLabel: "Contribution calendar unavailable", total: "{{count}} contributions in the last year", less: "Less", more: "More" },
+  highlights: { pause: "Pause highlights", play: "Play highlights" },
+  cta: { text: "Have an idea, a question, or something interesting to build?", action: "Let’s Talk" },
+  quote: { text: "Do First Feel and think Later", author: "Ashmit" },
+  experience: { title: "Experience", description: "Learning, building, and solving problems along the way." },
+  contact: {
+    title: "Let’s talk.", description: "Have a project in mind or just want to say hello? Drop me a message.", emailLabel: "Write to me", formTitle: "Leave a message",
+    name: "Name", email: "Email", message: "Message", website: "Leave this field empty", namePlaceholder: "Your name", emailPlaceholder: "you@example.com", messagePlaceholder: "What would you like to talk about?",
+    send: "Send message", sending: "Sending…", mailto: "Open email draft", prepareDraft: "Prepare email draft", fallback: "You can send this message using your email app.", draftReady: "Your draft is ready. Open it in your email app to send.", sent: "Thanks — your message has been sent.",
+    invalid: "Please check the highlighted fields.", invalidName: "Please enter a name between 2 and 80 characters.", invalidEmail: "Please enter a valid email address.", invalidMessage: "Please enter a message between 10 and 5,000 characters.", failed: "The message couldn’t be sent. Please try email instead.", rateLimited: "Too many messages. Please wait a few minutes or use email.", subject: "Portfolio message from",
+  },
+  views: { label: "Portfolio views" },
+  footer: { credit: "Designed & Developed by", copyright: "All rights reserved." },
+  notFound: { title: "Page not found", text: "This page doesn't exist. Head back to the home page.", action: "Back home" },
+} as const;
+export type TextPart = { text: string; emphasis?: boolean };

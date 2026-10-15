@@ -1,0 +1,7 @@
+# Add a project in 5 steps
+
+1. **Open `data/projects.ts`.** Add one object to the typed `projects` array, using the fully commented example. Required fields are `id`, `title`, `tagline`, `description`, `tech`, `status`, `featured`, and `order`. Optional fields are `liveUrl`, `repoUrl`, `demoVideoUrl`, `image`, and `badge`. Use a unique slug for `id`.
+2. **Add your screenshot.** Put it at `public/projects/<slug>.webp`, ideally around 1200 × 770px. Set `image: "/projects/<slug>.webp"`. Omit `image` for the generated gradient thumbnail. Only add images you can use.
+3. **Set links and status.** Choose `live`, `in-progress`, `open-source`, or `research`. Omit `liveUrl` when there is no site: the card still shows its status and any repository or video links. A public repository is not necessarily open-source; use that status only when appropriate. Add `badge` only for a verified real metric.
+4. **Choose placement.** Set `featured: true` to sort it before non-featured entries. Lower `order` values come first within each group. Home shows the first four projects. The Projects page shows all projects and builds filters from their `tech` values. Empty slots fill the grid to two cards when needed.
+5. **Test and deploy.** Run `npm run dev` and visit `/` and `/projects`. Check links, filters, and mobile layout. Then run `npm run lint`, `npm run typecheck`, and `npm run build`. Commit the object and screenshot and redeploy on Vercel.
