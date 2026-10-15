@@ -3,6 +3,72 @@
 Repairs from the “fix all the issues and run it” request. The full editing guide and
 older history remain in [MD_FILES/HOW_TO_FIX.md](MD_FILES/HOW_TO_FIX.md).
 
+## GitHub activity on Vercel and navigation — 2026-10-15
+
+The reported production screenshot showed an unavailable contribution calendar.
+The home page fetched GitHub data during static generation and could bake a
+temporary failure into its HTML. Upstream responses were also cached before
+validation, including HTTP 200 responses containing GraphQL errors or invalid
+calendar markup. Production logs were not available, so the exact deployed
+upstream failure is unconfirmed.
+
+- Removed GitHub fetching from the home-page build. The calendar now loads from
+  the Node.js `/api/github` route after the page opens.
+- Upstream requests bypass the Next.js data cache. The API caches only valid,
+  nonempty data for five minutes at the CDN, with a one-hour stale-revalidation
+  window. Failures return HTTP 503 with `Cache-Control: no-store` and
+  `Retry-After: 60`, so a later request can recover.
+- Preserved authenticated GraphQL with a public-calendar fallback. Tokens remain
+  server-side. Added a 30-second function budget for both eight-second attempts,
+  a 20-second browser timeout, and a manual retry that retains loaded data if a
+  refresh fails.
+- Kept the activity summary, calendar, profile link, and retry UI from the existing
+  workspace changes.
+- Removed the navigation hover underline that appeared alongside the current
+  page's dot. Hover/focus changes text color; only the current route has the dot
+  and `aria-current="page"`, including in the mobile menu.
+
+### Deploy and verify
+
+1. Deploy all changed files, including the new `app/api/github/route.ts`.
+2. In Vercel, use the Next.js framework preset. If using `GITHUB_TOKEN`, set it in
+   **Settings → Environment Variables** for Production (and Preview if needed),
+   then redeploy. `.env.local` is ignored by Git and is not uploaded automatically.
+   Never name the token `NEXT_PUBLIC_GITHUB_TOKEN`.
+3. Open `/api/github` on the deployed domain. Expect HTTP 200 and a nonempty
+   `contributions` array. HTTP 404 means this route is missing from that deployment;
+   HTTP 503 means both upstream sources failed. Inspect `[github]` function logs
+   for authentication, rate-limit, invalid-data, or network errors.
+4. Open Home and use **Refresh activity**. Check that activity renders, then hover
+   Experience: Home should retain its dot without an underline under Experience.
+   Navigate to Experience and confirm that the dot moves to that page.
+
+References: [Vercel cache headers](https://vercel.com/docs/caching/cache-control-headers),
+[GitHub GraphQL authentication](https://docs.github.com/en/graphql/guides/forming-calls-with-graphql).
+
+### Verification for this change
+
+- All 14 Node regression tests passed, including runtime HTTP failure/recovery,
+  token fallback, invalid upstream data, and uncached retry behavior.
+- TypeScript and targeted ESLint checks passed.
+- `next build --webpack` passed and generated all 13 pages. The output confirms
+  `/` is static and `/api/github` runs on demand.
+- The default Turbopack build hit a local CSS-worker startup crash. Webpack was
+  used for production-preview verification; the project's build command was not
+  changed. A Vercel build has not been run in this task.
+- The real local production endpoint returned HTTP 200 with 369 days and the
+  expected success cache headers. The browser displayed the contribution graph,
+  summary totals, and working refresh button. The public fallback also returned
+  real data in a separate token-free request.
+- The browser showed a single Home indicator without hover underlines and could
+  navigate through the mobile menu. HTTP checks confirmed exactly one current
+  navigation link on Home, Projects, and Experience.
+- Existing HTTP smoke checks passed using `http://localhost:3000`. Using
+  `127.0.0.1` for those POST checks triggers the existing origin guard because
+  Next.js resolves the internal request origin as `localhost`.
+- The production preview is running at `http://localhost:3000`; no deployment or
+  Vercel environment-variable changes were made.
+
 ## Issues fixed
 
 | Issue | Fix | Files |
@@ -28,12 +94,12 @@ older history remain in [MD_FILES/HOW_TO_FIX.md](MD_FILES/HOW_TO_FIX.md).
 | No repeatable checks for the validation and view-request bugs | Added seven built-in Node tests and safe local HTTP smoke checks. Declared the package's existing ESM format to remove Node's ambiguous-module warning. | `tests/*.test.mjs`, `scripts/check-site.mjs`, `package.json` |
 | Local preview refused connections | Started the missing Next.js server on loopback port 3000 and verified HTTP responses. Keep its process running. | Runtime; `README.md` |
 
-## Verification commands
+## Earlier repair verification
 
-Final result: lint passed with zero warnings; generated route types and TypeScript
+At the end of the earlier repair: lint passed with zero warnings; generated route types and TypeScript
 passed; all 7 regression tests passed; the production build generated all 12 pages
-successfully; all local HTTP smoke checks passed. The development server remains
-running on port 3000.
+successfully; all local HTTP smoke checks passed. That run used a development
+server on port 3000; see the current verification above for this run.
 
 ```powershell
 npm run lint

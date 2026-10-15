@@ -114,9 +114,7 @@
   .blueprint-section { border-block: 1px dashed var(--border); margin-top: 24px; }
   .section-heading { font-family: var(--font-instrument-serif), Georgia, serif; font-size: clamp(2rem, 4vw, 2.5rem); line-height: 1.1; letter-spacing: -0.025em; }
   .nav-link { position: relative; display: inline-flex; align-items: center; min-height: 44px; color: var(--muted-foreground); font-size: 15px; transition: color 0.25s ease; }
-  .nav-link::before { content: ""; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--foreground); border-radius: 1px; transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1), left 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-  .nav-link:hover::before { width: 100%; left: 0; }
-  .nav-link:hover, .nav-link.is-active { color: var(--foreground); }
+  .nav-link:hover, .nav-link:focus-visible, .nav-link.is-active { color: var(--foreground); }
   .nav-link.is-active { font-weight: 600; }
   .nav-link.is-active::after { content: ""; position: absolute; bottom: 1px; left: calc(50% - 2px); width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
   .mobile-nav-link { padding: 12px; min-height: 52px; font-size: 18px; border-radius: 6px; transition: background 0.25s ease, transform 0.25s ease; }

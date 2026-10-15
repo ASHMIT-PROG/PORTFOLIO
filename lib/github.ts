@@ -5,7 +5,6 @@ const daySchema = z.object({ date: z.iso.date(), contributionCount: z.number().i
 const responseSchema = z.object({ data: z.object({ user: z.object({ contributionsCollection: z.object({ contributionCalendar: z.object({ totalContributions: z.number().int().nonnegative(), weeks: z.array(z.object({ contributionDays: z.array(daySchema) })) }) }) }) }) });
 const contributionsSchema = z.array(z.object({ date: z.iso.date(), count: z.number().int().nonnegative(), level: z.number().int().min(0).max(4) })).min(1);
 const levels = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 };
-const revalidate = 3600;
 
 async function getAuthenticatedContributions(username: string, token: string): Promise<Contribution[] | null> {
   try {
@@ -13,7 +12,8 @@ async function getAuthenticatedContributions(username: string, token: string): P
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", "User-Agent": "portfolio-contributions" },
       body: JSON.stringify({ query: "query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}", variables: { login: username } }),
-      next: { revalidate }, signal: AbortSignal.timeout(8000),
+      // Cache only validated responses at /api/github, never upstream error payloads.
+      cache: "no-store", signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) {
       console.warn(`[github] GraphQL returned HTTP ${response.status}; trying the public calendar.`);
@@ -67,7 +67,7 @@ async function getPublicContributions(username: string): Promise<Contribution[] 
   try {
     const response = await fetch(`https://github.com/users/${encodeURIComponent(username)}/contributions`, {
       headers: { Accept: "text/html", "Accept-Language": "en-US", "User-Agent": "portfolio-contributions" },
-      next: { revalidate }, signal: AbortSignal.timeout(8000),
+      cache: "no-store", signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) {
       console.warn(`[github] Public calendar returned HTTP ${response.status}.`);

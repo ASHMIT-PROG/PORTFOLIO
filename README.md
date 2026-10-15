@@ -62,14 +62,31 @@ the project's Settings → Environment Variables for each deployment environment
 For Vercel, use its Next.js preset, the pnpm lockfile, `npm run build`, and the
 variables above. Redeploy after changing environment variables or adding public assets.
 
-GitHub activity does not require a token on Vercel. When a token is configured, it
-is used only on the server; authentication, rate-limit, and network errors fall
-back to the public calendar. Data and the home page revalidate hourly on the next
-request. If both GitHub sources are unavailable, the page still renders with a
-profile link; check deployment logs for messages prefixed with `[github]`.
+GitHub activity can load without a token using GitHub's public calendar. When a
+token is configured, it is used only on the server; authentication, rate-limit,
+and network errors fall back to the public calendar. If both GitHub sources are
+unavailable, the page still renders with a profile link and a retry button; check
+deployment logs for messages prefixed with `[github]`.
 The public fallback follows GitHub's calendar HTML and may need updating if that
 markup changes. A valid `GITHUB_TOKEN` keeps the documented GraphQL API as the
 preferred source. Never use a `NEXT_PUBLIC_` prefix for this token.
+
+The activity section showcases ASHMIT-PROG's contribution calendar, total
+contributions, active days, and best day. It loads through `/api/github` in the
+browser, independently of the static home page. Builds no longer request GitHub
+data. Upstream requests use `no-store`; only validated successful API responses
+are cached at the CDN for five minutes, with up to one hour of stale data while
+revalidating. The endpoint returns uncached HTTP 503 responses on failure.
+Visitors can retry manually; failed refreshes preserve an already loaded calendar,
+and stalled browser requests stop after 20 seconds. The Vercel function has a
+30-second limit to accommodate two upstream attempts of up to eight seconds each.
+
+Deploy the complete change, including `app/api/github/route.ts`. Check
+`https://<your-domain>/api/github` after deployment: HTTP 200 should contain a
+nonempty `contributions` array. If it returns 404, the new route was not deployed;
+if it returns 503, check the function logs and configure a valid server-only
+`GITHUB_TOKEN` in the matching Vercel environment, then redeploy. Local
+`.env.local` values are not automatically uploaded to Vercel.
 
 See [HOW_TO_FIX.md](HOW_TO_FIX.md) for current fixes, checks, and limitations.
 The detailed editing guide and older history are in [MD_FILES/HOW_TO_FIX.md](MD_FILES/HOW_TO_FIX.md).

@@ -10,15 +10,12 @@ import { TechStack } from "@/components/tech-stack";
 import { GitHubCalendar } from "@/components/github-calendar";
 import { ExperiencePreview } from "@/components/experience-preview";
 import { Highlights } from "@/components/highlights";
-import { getContributions } from "@/lib/github";
 import { Section } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
-export const revalidate = 3600;
-export default async function Home() {
-  const contributions = await getContributions(site.githubUsername);
+export default function Home() {
   return (
     <>
       <Profile />
@@ -35,7 +32,7 @@ export default async function Home() {
         <TechStack />
       </ScrollReveal>
       <ScrollReveal direction="up" delay={0.06} duration={0.6}>
-        <Section title={site.sections.activity} id="github-activity" contentClassName="py-6 sm:px-8"><GitHubCalendar data={contributions} /></Section>
+        <Section title={site.sections.activity} id="github-activity" contentClassName="py-6 sm:px-8"><GitHubCalendar /></Section>
       </ScrollReveal>
       <ScrollReveal direction="up" delay={0.06} duration={0.6}>
         <ExperiencePreview />

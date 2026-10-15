@@ -41,7 +41,8 @@ test("loads public contributions without a token, sorted with accurate counts", 
     assert.equal(url, "https://github.com/users/ASHMIT-PROG/contributions");
     assert.equal(options.headers.Authorization, undefined);
     assert.equal(options.headers["Accept-Language"], "en-US");
-    assert.equal(options.next.revalidate, 3600);
+    assert.equal(options.cache, "no-store");
+    assert.equal(options.next, undefined);
     return new Response(publicCalendar);
   });
   assert.deepEqual(await getContributions("ASHMIT-PROG"), expected);
@@ -53,6 +54,7 @@ test("prefers GraphQL with a trimmed token and preserves contribution levels", a
   const fetchMock = t.mock.method(globalThis, "fetch", async (url, options) => {
     assert.equal(url, "https://api.github.com/graphql");
     assert.equal(options.headers.Authorization, "Bearer test-token");
+    assert.equal(options.cache, "no-store");
     assert.equal(JSON.parse(options.body).variables.login, "ASHMIT-PROG");
     return Response.json(graphResponse);
   });
@@ -104,5 +106,18 @@ test("returns null when both sources fail so the rest of the page can render", a
   configureToken(t, "test-token");
   const fetchMock = t.mock.method(globalThis, "fetch", async () => { throw new Error("offline"); });
   assert.equal(await getContributions("ASHMIT-PROG"), null);
+  assert.equal(fetchMock.mock.callCount(), 2);
+});
+
+test("a failed request can recover on retry without retaining a failed payload", async (t) => {
+  configureToken(t, undefined);
+  let available = false;
+  const fetchMock = t.mock.method(globalThis, "fetch", async (_url, options) => {
+    assert.equal(options.cache, "no-store");
+    return new Response(available ? publicCalendar : "<html>Temporarily unavailable</html>");
+  });
+  assert.equal(await getContributions("ASHMIT-PROG"), null);
+  available = true;
+  assert.deepEqual(await getContributions("ASHMIT-PROG"), expected);
   assert.equal(fetchMock.mock.callCount(), 2);
 });
