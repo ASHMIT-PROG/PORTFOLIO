@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useId } from "react";
+import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
 import { site } from "@/data/site";
 import { moreNavigation, navigation, navigationLabels, type NavigationItem } from "@/data/navigation";
@@ -13,27 +15,33 @@ import { cn } from "@/lib/utils";
 
 function NavLink({ item, mobile = false, ...props }: { item: NavigationItem; mobile?: boolean } & Omit<React.ComponentProps<typeof Link>, "href">) {
   const pathname = usePathname();
-  const active = item.href === "/" ? pathname === "/" : pathname === item.href;
+  const reduceMotion = useReducedMotion();
+  const active = pathname === item.href;
   return (
     <Link {...props} href={item.href} aria-current={active ? "page" : undefined} className={cn("nav-link", mobile && "mobile-nav-link", active && "is-active")}>
-      {item.label}
+      <span className="nav-label">{item.label}</span>
+      {active && (mobile || reduceMotion
+        ? <span aria-hidden="true" className="nav-active-dot" />
+        : <motion.span aria-hidden="true" className="nav-active-dot" layoutId="active-page" initial={false} transition={{ type: "spring", stiffness: 450, damping: 36 }} />)}
     </Link>
   );
 }
 
 export function Navbar() {
+  const navigationId = useId();
   return (
-    <header className="sticky top-0 z-40 border-b border-dashed border-border bg-background/90 backdrop-blur-xl">
+    <LayoutGroup id={navigationId}>
+    <motion.header layoutRoot className="site-header sticky top-0 z-40 border-b border-dashed border-border bg-background/90 backdrop-blur-xl">
       <div className="page-column flex h-16 items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="font-display text-[38px] leading-none tracking-tight" aria-label={`${site.wordmark} — ${navigation[0].label}`}>
           {site.wordmark}
         </Link>
         <div className="flex items-center gap-3 sm:gap-5">
-          <nav aria-label={navigationLabels.main} className="hidden items-center gap-6 md:flex">
+          <nav aria-label={navigationLabels.main} className="hidden items-center gap-1 md:flex">
             {navigation.map((item) => <NavLink key={item.href} item={item} />)}
             <DropdownMenu>
               <DropdownMenuTrigger className="group nav-link flex items-center gap-2 data-[state=open]:text-foreground">
-                {navigationLabels.more}<ChevronDown aria-hidden="true" className="size-4 transition-transform group-data-[state=open]:rotate-180" />
+                <span className="nav-label">{navigationLabels.more}</span><ChevronDown aria-hidden="true" className="nav-chevron relative size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {moreNavigation.map((item) => (
@@ -74,6 +82,7 @@ export function Navbar() {
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
+    </LayoutGroup>
   );
 }

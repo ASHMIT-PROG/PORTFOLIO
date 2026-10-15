@@ -3,6 +3,22 @@
 Repairs from the “fix all the issues and run it” request. The full editing guide and
 older history remain in [MD_FILES/HOW_TO_FIX.md](MD_FILES/HOW_TO_FIX.md).
 
+## Smooth header motion — 2026-10-15
+
+- Added soft hover/focus backgrounds and a spring-animated active-page dot using
+  the existing Motion dependency. Link weight stays constant to avoid width jumps.
+- Replaced the wide rectangular header focus outline with a closer, rounded
+  keyboard-focus ring. Only the current page retains the active dot.
+- Added eased open/close animations for More and the mobile drawer, a rotating
+  chevron, gentle button press feedback, and rotating/fading theme icons.
+- Preserved reduced-motion support: the active marker becomes static and CSS
+  transitions/animations use the existing reduced-motion overrides.
+- TypeScript and targeted ESLint passed. Browser checks covered desktop route
+  changes, dropdown open/Escape dismissal, keyboard focus, both themes, and mobile
+  drawer opening/closing at 390px. No browser console errors were observed.
+- The updated development preview runs at `http://127.0.0.1:3000` using webpack.
+  These changes have not been deployed to Vercel.
+
 ## GitHub activity on Vercel and navigation — 2026-10-15
 
 The reported production screenshot showed an unavailable contribution calendar.

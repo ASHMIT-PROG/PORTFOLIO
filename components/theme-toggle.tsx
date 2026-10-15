@@ -9,9 +9,9 @@ export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
 
   return (
-    <Button variant="ghost" size="icon" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="text-foreground">
-      <Sun aria-hidden="true" className="hidden dark:block" />
-      <Moon aria-hidden="true" className="block dark:hidden" />
+    <Button variant="ghost" size="icon" onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")} className="theme-toggle text-foreground">
+      <Sun aria-hidden="true" className="theme-icon theme-sun" />
+      <Moon aria-hidden="true" className="theme-icon theme-moon" />
       <span className="sr-only hidden dark:block">{navigationLabels.light}</span>
       <span className="sr-only block dark:hidden">{navigationLabels.dark}</span>
     </Button>
