@@ -16,9 +16,9 @@ import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
-export const revalidate = 86400;
+export const revalidate = 3600;
 export default async function Home() {
-  const contributions = await getContributions();
+  const contributions = await getContributions(site.githubUsername);
   return (
     <>
       <Profile />
